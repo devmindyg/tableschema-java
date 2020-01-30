@@ -4,9 +4,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import io.frictionlessdata.tableschema.exception.ForeignKeyException;
-// TODO: Reference and ForeignKey validators check for JSONArray instances
-// Not much we can do here, regarding org.json, until we do a refactoring in those classes
-import org.json.JSONArray;
+import io.frictionlessdata.tableschema.objectmapper.ObjectMapperSingleton;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.junit.Assert;
 
 public class ForeignKeyTest {
@@ -27,9 +27,6 @@ public class ForeignKeyTest {
     @Test
     public void testValidArrayFields() throws ForeignKeyException {
         String refFields = "[\"refField1\", \"refField2\"]";
-        // TODO: Reference validator checks for JSONArray instance
-        // we must enhance this test after jackson refactoring
-        // so we can validate with other types, for now, let's check only with String
         Reference ref = new Reference("aResource", refFields, true);
         String fkFields = "[\"fkField1\", \"fkField2\"]";
         ForeignKey fk = new ForeignKey(fkFields, ref, true);
@@ -73,10 +70,11 @@ public class ForeignKeyTest {
 
     @Test
     public void testFkFieldsIsStringAndRefFieldsIsArray() throws ForeignKeyException{
-        JSONArray refFields = new JSONArray();
-        refFields.put("field1");
-        refFields.put("field2");
-        refFields.put("field3");
+        ObjectMapper mapper = ObjectMapperSingleton.INSTANCE.getMapper();
+        ArrayNode refFields = mapper.createArrayNode();
+        refFields.add("field1");
+        refFields.add("field2");
+        refFields.add("field3");
 
         Reference ref = new Reference("aResource", refFields, true);
 
@@ -87,11 +85,11 @@ public class ForeignKeyTest {
     @Test
     public void testFkFieldsIsArrayAndRefFieldsIsString() throws ForeignKeyException{
         Reference ref = new Reference("aResource", "aStringField", true);
-
-        JSONArray fkFields = new JSONArray();
-        fkFields.put("field1");
-        fkFields.put("field2");
-        fkFields.put("field3");
+        ObjectMapper mapper = ObjectMapperSingleton.INSTANCE.getMapper(); 
+        ArrayNode fkFields = mapper.createArrayNode();
+        fkFields.add("field1");
+        fkFields.add("field2");
+        fkFields.add("field3");
 
         exception.expectMessage("The reference's fields property must be an array if the outer fields is an array.");
         ForeignKey fk = new ForeignKey(fkFields, ref, true);
@@ -99,16 +97,17 @@ public class ForeignKeyTest {
 
     @Test
     public void testFkAndRefFieldsDifferentSizeArray() throws ForeignKeyException{
-        JSONArray refFields = new JSONArray();
-        refFields.put("refField1");
-        refFields.put("refField2");
-        refFields.put("refField3");
+        ObjectMapper mapper = ObjectMapperSingleton.INSTANCE.getMapper();
+        ArrayNode refFields = mapper.createArrayNode();
+        refFields.add("refField1");
+        refFields.add("refField2");
+        refFields.add("refField3");
 
         Reference ref = new Reference("aResource", refFields, true);
 
-        JSONArray fkFields = new JSONArray();
-        fkFields.put("field1");
-        fkFields.put("field2");
+        ArrayNode fkFields = mapper.createArrayNode();
+        fkFields.add("field1");
+        fkFields.add("field2");
 
         exception.expectMessage("The reference's fields property must be an array of the same length as that of the outer fields' array.");
         ForeignKey fk = new ForeignKey(fkFields, ref, true);
