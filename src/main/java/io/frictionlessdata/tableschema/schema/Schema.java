@@ -9,14 +9,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.frictionlessdata.tableschema.io.FileReference;
 import io.frictionlessdata.tableschema.io.LocalFileReference;
 import io.frictionlessdata.tableschema.io.URLFileReference;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
@@ -178,7 +176,7 @@ public class Schema {
         this.initFromSchemaJson(schemaString);
     }
     
-    private void initFromSchemaJson(String json) throws PrimaryKeyException, ForeignKeyException{
+    private void initFromSchemaJson(String json) throws PrimaryKeyException, ForeignKeyException, IOException {
         JSONObject schemaObj = new JSONObject(json);
         // Set Fields
         if(schemaObj.has(JSON_KEY_FIELDS)){
@@ -261,7 +259,7 @@ public class Schema {
      * instantiated with the strict flag.
      * @throws ValidationException 
      */
-    private void validate() throws ValidationException{
+    private void validate() throws ValidationException, JsonProcessingException {
         try{
              this.tableJsonSchema.validate(new JSONObject(this.getJson()));
              if (null != foreignKeys) {
@@ -291,7 +289,7 @@ public class Schema {
         return this.errors;
     }
     
-    public String getJson(){
+    public String getJson() throws JsonProcessingException {
         //FIXME: Maybe we should use JSON serializer like Gson?
         JSONObject schemaJson = new JSONObject();
         

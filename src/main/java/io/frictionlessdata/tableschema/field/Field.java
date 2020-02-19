@@ -195,31 +195,6 @@ public abstract class Field<T> {
      * @return inferred format encoded as a string
      */
     public abstract String parseFormat(String value, Map<String, Object> options);
-
-    /**
-     * Use the Field definition to cast a value into the Field type.
-     * Enforces constraints by default.
-     * @param value the value string to cast
-     * @return result of the cast operation
-     * @throws InvalidCastException if the content of `value` cannot be cast to the destination type
-     * @throws ConstraintsException thrown if `enforceConstraints` was set to `true`and constraints were violated
-     */
-    public T castValue(String value) throws InvalidCastException, ConstraintsException{
-        return castValue(value, true, null);
-    }
-    
-    /**
-     * Use the Field definition to cast (=parse) a value into the Field type. Constraints enforcing
-     * can be switched on or off.
-     * @param value the value string to cast
-     * @param enforceConstraints whether to enforce Field constraints
-     * @param options casting options
-     * @return result of the cast operation
-     * @throws InvalidCastException if the content of `value` cannot be cast to the destination type
-     * @throws ConstraintsException thrown if `enforceConstraints` was set to `true`and constraints were violated
-     */
-    public T castValue(String value, boolean enforceConstraints, Map<String, Object> options) throws InvalidCastException, ConstraintsException{
-        if(this.type.isEmpty()){
             throw new InvalidCastException("Property 'type' must not be empty");
         } else if (StringUtils.isEmpty(value)) {
             return null;

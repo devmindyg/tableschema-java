@@ -7,12 +7,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Singleton to optimize creation of {@link com.fasterxml.jackson.databind.ObjectMapper}
  */
 public enum ObjectMapperSingleton {
-	INSTANCE;
+    INSTANCE;
 
-	private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-	public ObjectMapper getMapper() {
-		return this.mapper;
-	}
+    /**
+     * Gets jackson ObjectMapper instance
+     * 
+     * @return {@link ObjectMapper}
+     */
+    public ObjectMapper getMapper() {
+        return this.mapper;
+    }
 }
 
